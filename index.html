@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEB BY ATHARV MODS</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: black;
+            color: white;
+        }
+
+        .linear {
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(to right, black, skyblue);
+            border: 2px solid skyblue;
+            box-shadow: 0 0 10px skyblue;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .linear2 {
+            margin-top: 10px;
+            border: 2px solid skyblue;
+            box-shadow: 0 0 10px skyblue;
+            padding: 10px;
+        }
+
+        .textview {
+            margin: 10px;
+            padding: 5px;
+            text-align: center;
+            font-size: 20px;
+            color: skyblue;
+        }
+
+        .button {
+            margin: 10px;
+            padding: 10px;
+            background: skyblue;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 0 10px skyblue;
+        }
+
+        .list-view {
+            margin-top: 20px;
+            background: black;
+            border: 1px solid skyblue;
+            padding: 10px;
+            box-shadow: 0 0 10px skyblue;
+            height: 150px;
+            overflow-y: auto;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 5px skyblue;
+            }
+            50% {
+                box-shadow: 0 0 20px skyblue;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="linear">
+        <h1>KS MODS</h1>
+    </div>
+
+    <div class="linear2">
+        <div id="textview1" class="textview">// Timer Data Here</div>
+        <div id="textview2" class="textview">// Timer Countdown Here</div>
+
+        <button class="button" id="history">History</button>
+        <button class="button" id="generate-result">Result</button>
+
+        <div class="list-view" id="list-view">History:</div>
+    </div>
+
+    <script>
+        // Timer Logic
+        let previousTextView1 = "";
+        let history = []; // Array to store history of results
+
+        const textView1 = document.getElementById("textview1");
+        const textView2 = document.getElementById("textview2");
+        const listView = document.getElementById("list-view");
+
+        setInterval(() => {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentSecond = now.getSeconds();
+
+            const startHour = 5;
+            const startMinute = 29;
+
+            const elapsedMinutes = Math.max(0, (currentHour * 60 + currentMinute) - (startHour * 60 + startMinute));
+
+            // Update textView1 with formatted data
+            const formattedDate = now.toISOString().split("T")[0].replace(/-/g, "");
+            const periodNumber = "100001" + elapsedMinutes.toString().padStart(4, "0");
+            textView1.innerText = `${formattedDate}${periodNumber}`;
+
+            // Update textView2 with remaining seconds
+            const remainingSeconds = 60 - currentSecond;
+            textView2.innerText = `00:${remainingSeconds.toString().padStart(2, "0")}`;
+        }, 1000);
+
+        // Generate Random Result Logic
+        document.getElementById("generate-result").addEventListener("click", () => {
+            const currentTextView1 = textView1.innerText;
+            if (currentTextView1 === previousTextView1) {
+                alert("Please wait for the next period.");
+            } else {
+                // Generate a random number between 1 and 100
+                const randomResult = Math.floor(Math.random() * 100) + 1;
+
+                // Determine if the result is Big or Small
+                const resultType = randomResult <= 50 ? "Big" : "Small";
+
+                // Store the result in history with the period
+                const resultData = {
+                    period: currentTextView1,
+                    result: resultType,
+                };
+                history.push(resultData);
+
+                // Update the history list view
+                updateHistoryList();
+
+                previousTextView1 = currentTextView1;
+            }
+        });
+
+        // History button click logic
+        document.getElementById("history").addEventListener("click", () => {
+            updateHistoryList();
+        });
+
+        // Function to update the history list
+        function updateHistoryList() {
+            listView.innerHTML = "History:"; // Reset the list
+            history.forEach((item) => {
+                const listItem = document.createElement("div");
+                listItem.innerText = `Period: ${item.period} - Result: ${item.result}`;
+                listView.appendChild(listItem);
+            });
+        }
+    </script>
+
+</body>
+</html>
